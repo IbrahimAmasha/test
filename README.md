@@ -1,66 +1,39 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Multilingual Support Implementation in Laravel implementing roles and permissions , all without external packages.
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+## Overview
+This documentation outlines the approach taken to implement multilingual support in a Laravel application, focusing on roles and permissions. The solution allows users to interact with the application in their preferred language by providing translations for key entities.
 
-## About Laravel
+## 1. Database Structure
+To accommodate multiple languages, the application uses separate translation tables for Roles and Permissions. Each role and permission can have multiple translations corresponding to different locales (languages). 
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+### Key Components:
+- **Roles Table**: Contains roles defined in the application.
+- **Role Translations Table**: Stores translations for each role, including the locale and the translated name.
+- **Permissions Table**: Contains permissions available within the application.
+- **Permission Translations Table**: Similar to the role translations, this table stores translations for each permission.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+### Why Separate Translation Tables?
+Using separate translation tables provides several benefits:
+- **Scalability**: This approach allows for easy extension in the future. As new languages are added, translations can be seamlessly included without modifying the existing structure of roles and permissions.
+- **Flexibility**: Separate tables enable the possibility of updating translations independently, allowing for corrections or enhancements without affecting the main roles and permissions logic.
+- **Maintainability**: This structure simplifies maintenance, as all translations for roles and permissions are organized in dedicated tables, making it easier to manage and query translations.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+## 2. Implementing Roles and Permissions Natively
+Instead of using external packages, roles and permissions were implemented natively in the application. This was achieved through the following steps:
 
-## Learning Laravel
+1. **Database Migration**: Created migrations for the `roles`, `permissions`, `permission_role` tables, ensuring they have the necessary fields for managing roles, permissions, and their translations.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+2. **Model Creation**: Defined `Role`, `Permission`, and translation models to interact with their respective tables. These models were set up with relationships to facilitate easy access to translations.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+3. **Seeders**: Implemented seeders for populating the roles and permissions tables with default values, including translations for different locales.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+4. **Defined Roles**: Three roles were defined within the application:
+   - **Super Admin**: This role has full access to all application features and settings, including user management, role assignments, and permission configurations.
+   - **Admin**: Admins can manage users and view reports but have limited access compared to Super Admins. They cannot modify application settings or roles.
+   - **User**: Regular users have basic access to their profiles and can interact with the application’s main features but do not have permissions to manage other users or roles.
 
-## Laravel Sponsors
+5. **Access Control Logic**: Developed custom logic within the application to handle role and permission checks, allowing fine-grained access control based on user roles and their assigned permissions.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+6. **Localization**: Leveraged Laravel’s localization features to dynamically load the appropriate translations based on the current locale, ensuring that users see the correct role and permission names in their preferred language.
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+This approach provides a lightweight solution tailored to the application's specific needs without the overhead of additional packages.
